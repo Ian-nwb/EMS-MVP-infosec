@@ -1,4 +1,4 @@
-# NEVERIO — Secure Employee Management System (EMS)
+# Employee Management System (EMS)
 
 [![Security: Defense-in-Depth](https://img.shields.io/badge/Security-Defense--in--Depth-blue?style=for-the-badge&logo=shield)](file:///home/ian/Desktop/Work/INFOSEC-NEVERIO/docs/ARCHITECTURE.md)
 [![Tests: 13 Passed](https://img.shields.io/badge/Tests-13%20Passing-brightgreen?style=for-the-badge&logo=jest)](file:///home/ian/Desktop/Work/INFOSEC-NEVERIO/server/tests)
@@ -11,7 +11,7 @@
 
 ## 🌟 Executive Overview
 
-NEVERIO EMS is a defense-in-depth, role-based Employee Management System engineered with military-grade application security controls, cryptographic data isolation, threat modeling mitigations, and comprehensive audit observability.
+EMS is a defense-in-depth, role-based Employee Management System engineered with military-grade application security controls, cryptographic data isolation, threat modeling mitigations, and comprehensive audit observability.
 
 ### Key Architectural Highlights
 - 🛡️ **Defense-in-Depth Architecture:** Gateway rate limiting &rarr; Security headers (Helmet) &rarr; NoSQL injection operator sanitization &rarr; Strict Zod schema validation &rarr; JWT authentication &rarr; RBAC guards &rarr; AES-256-GCM field encryption &rarr; Immutable audit logging.
