@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMS — Architecture & Data Flow Visualizer</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #6366f1;
+      --accent: #06b6d4;
+    }
+    body {
+      margin: 0;
+      padding: 2rem;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 2.5rem;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #a5b4fc 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header p {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.65rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: rgba(99, 102, 241, 0.5);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    .diagram-card {
+      max-width: 1400px;
+      margin: 0 auto 3rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      display: none;
+    }
+    .diagram-card.visible {
+      display: block;
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      background: #0b1120;
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Employee Management System (EMS)</h1>
+    <p>Course Project Visual Deliverable: Architecture &amp; Data Flow Diagrams</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('arch')">1. System Architecture Diagram</button>
+    <button class="tab-btn" onclick="showTab('dfd')">2. Data Flow Diagram (DFD)</button>
+    <button class="tab-btn" onclick="showTab('er')">3. Database ER Diagram</button>
+  </div>
+
+  <!-- Architecture -->
+  <div id="tab-arch" class="diagram-card visible">
+    <div class="card-title">
+      <span>High-Level System Architecture &amp; Security Layer</span>
+      <span style="font-size: 0.8rem; color: var(--accent); font-weight: 500;">MERN + TLS 1.3 + Defense in Depth</span>
+    </div>
+    <div class="mermaid">
+flowchart TD
+  subgraph Client["Client Tier (React SPA - Vite)"]
+    UI["Modern Cyber Dashboard"]
+    AXIOS["Axios + Bearer Token Interceptor"]
+    UI --> AXIOS
+  end
+
+  subgraph Gateway["HTTPS / TLS 1.3 Gateway (Express API)"]
+    subgraph Security["Defense-in-Depth Security Layer"]
+      HELMET["1. Helmet Security Headers (CSP, HSTS)"]
+      RATE["2. Rate Limiting Middleware (Auth: 300/15m · API: 200/15m)"]
+      CORS["3. Strict CORS Origin Allow-List"]
+      SAN["4. express-mongo-sanitize (Strip $ and .)"]
+      AUTH["5. JWT Authentication Guard (4h Expiry)"]
+      LOCK["6. Account Lockout Guard (5 Failed Attempts)"]
+      RBAC["7. RBAC Guard (Superadmin / HR / Manager / Employee)"]
+      VAL["8. Zod Schema Validation"]
+    end
+    BIZ["Business Logic & Domain Controllers"]
+    CRYPTO["Node.js Crypto (AES-256-GCM Field Encryption)"]
+    LOG["Structured Tamper-Evident Audit Logger"]
+  end
+
+  subgraph DataTier["Data Tier"]
+    MONGOOSE["Typed Mongoose ODM"]
+    DB[("MongoDB Atlas Cloud (torinvr_db)")]
+  end
+
+  AXIOS -->|HTTPS + Bearer Token| HELMET
+  HELMET --> RATE --> CORS --> SAN --> AUTH --> LOCK --> RBAC --> VAL --> BIZ
+  BIZ --> CRYPTO --> MONGOOSE --> DB
+  BIZ --> LOG --> MONGOOSE
+    </div>
+  </div>
+
+  <!-- DFD -->
+  <div id="tab-dfd" class="diagram-card">
+    <div class="card-title">
+      <span>Data Flow Diagram (DFD) — Authentication &amp; Access Control</span>
+      <span style="font-size: 0.8rem; color: #a855f7; font-weight: 500;">Request Lifecycle &amp; Verification Flow</span>
+    </div>
+    <div class="mermaid">
+flowchart LR
+  REQ["User Login Request"] --> SAN["Sanitize & Validate Input"]
+  SAN --> L_CHK{"Account Locked?"}
+  L_CHK -->|Yes| L_OUT["403 Forbidden (Lockout Active)"]
+  L_CHK -->|No| H_CHK{"bcrypt Hash Match?"}
+  H_CHK -->|No| FAIL["Increment Failed Attempts + 401 Unauthorized"]
+  H_CHK -->|Yes| JWT["Issue Short-Lived JWT (4h)"]
+  JWT --> RBAC{"RBAC Role Check"}
+  RBAC -->|Denied| DENY["403 Forbidden + Audit Log"]
+  RBAC -->|Allowed| QRY["Typed Mongoose Query"]
+  QRY --> ENC["AES-256-GCM Cryptography"]
+  ENC --> RESP["Safe JSON Response over TLS 1.3"]
+    </div>
+  </div>
+
+  <!-- ER Diagram -->
+  <div id="tab-er" class="diagram-card">
+    <div class="card-title">
+      <span>Database Entity-Relationship (ER) Diagram</span>
+      <span style="font-size: 0.8rem; color: #10b981; font-weight: 500;">MongoDB Collections Schema</span>
+    </div>
+    <div class="mermaid">
+erDiagram
+  USERS ||--o| EMPLOYEES : "links to"
+  EMPLOYEES }o--|| DEPARTMENTS : "belongs to"
+  EMPLOYEES ||--o{ LEAVE_REQUESTS : "submits"
+  EMPLOYEES ||--o{ PAYROLL : "receives"
+  EMPLOYEES ||--o{ ATTENDANCE : "records"
+  USERS ||--o{ AUDIT_LOGS : "triggers"
+
+  USERS {
+    ObjectId _id PK
+    string email UK
+    string password_hash
+    string role
+    number failedLoginAttempts
+    date lockoutUntil
+  }
+  EMPLOYEES {
+    ObjectId _id PK
+    string full_name
+    string position
+    ObjectId department_id FK
+    string ssn_encrypted
+    number salary
+  }
+  DEPARTMENTS {
+    ObjectId _id PK
+    string name
+  }
+  LEAVE_REQUESTS {
+    ObjectId _id PK
+    ObjectId employee_id FK
+    string status
+    date start_date
+    date end_date
+  }
+  PAYROLL {
+    ObjectId _id PK
+    ObjectId employee_id FK
+    number net_pay
+    date pay_date
+  }
+  ATTENDANCE {
+    ObjectId _id PK
+    ObjectId employee_id FK
+    datetime check_in
+    datetime check_out
+  }
+  AUDIT_LOGS {
+    ObjectId _id PK
+    string action
+    string status
+    datetime createdAt
+  }
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#0b1120',
+        primaryColor: '#6366f1',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#818cf8',
+        lineColor: '#38bdf8',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a'
+      }
+    });
+
+    function showTab(id) {
+      document.querySelectorAll('.diagram-card').forEach(el => el.classList.remove('visible'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('visible');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

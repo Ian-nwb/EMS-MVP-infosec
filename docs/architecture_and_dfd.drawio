@@ -1,0 +1,178 @@
+<mxfile host="app.diagrams.net" modified="2026-10-01T15:00:00.000Z" agent="Antigravity" version="21.0.0" type="device">
+  <diagram id="arch-page" name="1. System Architecture">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" background="#0f172a" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Header -->
+        <mxCell id="hdr1" value="EMPLOYEE MANAGEMENT SYSTEM (EMS) - SYSTEM ARCHITECTURE" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#f8fafc;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="900" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr2" value="Secure MERN Architecture: MongoDB Atlas · Express.js API · React SPA · Node.js Crypto" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#94a3b8;fontFamily=Helvetica;" vertex="1" parent="1">
+          <mxGeometry x="250" y="55" width="900" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- CLIENT TIER CONTAINER -->
+        <mxCell id="boxClient" value="CLIENT TIER (React SPA - Vite)" style="swimlane;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fontColor=#38bdf8;fillColor=#1e293b;strokeColor=#0284c7;rounded=1;arcSize=8;startSize=35;" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="280" height="680" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="c1" value="Cyber Themed Modern UI&#xa;(Dark Glassmorphic Aesthetic)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#e2e8f0;fontSize=12;fontStyle=1;" vertex="1" parent="boxClient">
+          <mxGeometry x="25" y="60" width="230" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="Role-Based Portals:&#xa;• Superadmin (User CRUD)&#xa;• HR Admin (Records &amp; Audit)&#xa;• Manager (Approvals)&#xa;• Employee (Self-Service)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#64748b;fontColor=#cbd5e1;fontSize=11;align=left;spacingLeft=15;" vertex="1" parent="boxClient">
+          <mxGeometry x="25" y="150" width="230" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="Axios HTTP Client&#xa;• Auth Bearer Token Interceptor&#xa;• 401 Auto-Logout &amp; Redirection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0369a1;strokeColor=#38bdf8;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="boxClient">
+          <mxGeometry x="25" y="300" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- GATEWAY & SECURITY LAYER CONTAINER -->
+        <mxCell id="boxGateway" value="GATEWAY &amp; DEFENSE-IN-DEPTH SECURITY LAYER (Express.js / TLS 1.3)" style="swimlane;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fontColor=#a855f7;fillColor=#1e293b;strokeColor=#9333ea;rounded=1;arcSize=8;startSize=35;" vertex="1" parent="1">
+          <mxGeometry x="380" y="100" width="560" height="680" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s1" value="1. Helmet Security Headers (CSP, HSTS, X-Frame-Options)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a855f7;fontColor=#f3e8ff;fontSize=11;fontStyle=1;" vertex="1" parent="boxGateway">
+          <mxGeometry x="30" y="55" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="2. Dual Rate Limiter (Brute-Force &amp; DoS Protection)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a855f7;fontColor=#f3e8ff;fontSize=11;fontStyle=1;" vertex="1" parent="boxGateway">
+          <mxGeometry x="30" y="105" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="3. express-mongo-sanitize (Strips '$' and '.' NoSQL Injection keys)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a855f7;fontColor=#f3e8ff;fontSize=11;fontStyle=1;" vertex="1" parent="boxGateway">
+          <mxGeometry x="30" y="155" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="4. JWT Authentication Middleware (Bearer Signature &amp; 4h Expiry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a855f7;fontColor=#f3e8ff;fontSize=11;fontStyle=1;" vertex="1" parent="boxGateway">
+          <mxGeometry x="30" y="205" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" value="5. Account Lockout Guard (Auto-lock for 15 min upon 5 failed attempts)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a855f7;fontColor=#f3e8ff;fontSize=11;fontStyle=1;" vertex="1" parent="boxGateway">
+          <mxGeometry x="30" y="255" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s6" value="6. RBAC Guard (Enforces Superadmin / HR / Manager / Employee)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a855f7;fontColor=#f3e8ff;fontSize=11;fontStyle=1;" vertex="1" parent="boxGateway">
+          <mxGeometry x="30" y="305" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s7" value="7. Input Validation Layer (Strict Zod Schema Allow-Lists)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a855f7;fontColor=#f3e8ff;fontSize=11;fontStyle=1;" vertex="1" parent="boxGateway">
+          <mxGeometry x="30" y="355" width="500" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Services Subgroup -->
+        <mxCell id="boxServices" value="Domain Controllers &amp; Application Services" style="swimlane;whiteSpace=wrap;html=1;fontSize=12;fontStyle=1;fontColor=#34d399;fillColor=#064e3b;strokeColor=#059669;rounded=1;arcSize=6;startSize=30;" vertex="1" parent="boxGateway">
+          <mxGeometry x="30" y="420" width="500" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="srv1" value="Controllers:&#xa;• Superadmin (User CRUD)&#xa;• Employee &amp; Department&#xa;• Leave &amp; Attendance&#xa;• Payroll Processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#059669;fontColor=#e2e8f0;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="boxServices">
+          <mxGeometry x="20" y="40" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="srv2" value="AES-256-GCM Crypto Engine&#xa;(Field-level encryption at rest for sensitive PII &amp; Salaries)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=11;fontStyle=1;" vertex="1" parent="boxServices">
+          <mxGeometry x="260" y="40" width="220" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="srv3" value="Structured Audit Logger&#xa;(Immutable security events: Logins, Failures, PII access)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#022c22;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=11;fontStyle=1;" vertex="1" parent="boxServices">
+          <mxGeometry x="260" y="135" width="220" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- DATA TIER CONTAINER -->
+        <mxCell id="boxData" value="DATA TIER (MongoDB Atlas)" style="swimlane;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;fontColor=#10b981;fillColor=#1e293b;strokeColor=#10b981;rounded=1;arcSize=8;startSize=35;" vertex="1" parent="1">
+          <mxGeometry x="980" y="100" width="340" height="680" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" value="Typed Mongoose ODM&#xa;Strict Schema Types, ObjectId Refs&#xa;Injection Prevention" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="boxData">
+          <mxGeometry x="25" y="60" width="290" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" value="MongoDB Atlas Cluster&#xa;(torinvr_db on AWS)&#xa;&#xa;Collections:&#xa;• Users (bcrypt hashes)&#xa;• Employees (AES encrypted)&#xa;• Departments&#xa;• Leave_Requests&#xa;• Payroll (AES encrypted)&#xa;• Attendance&#xa;• Audit_Logs (Immutable)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#022c22;strokeColor=#10b981;fontColor=#ecfdf5;fontSize=12;fontStyle=1;align=left;spacingLeft=25;" vertex="1" parent="boxData">
+          <mxGeometry x="25" y="170" width="290" height="470" as="geometry" />
+        </mxCell>
+
+        <!-- EDGES / CONNECTIONS -->
+        <mxCell id="edge1" value="HTTPS / TLS 1.3&#xa;Bearer Token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#38bdf8;strokeWidth=2;fontColor=#38bdf8;fontSize=11;" edge="1" parent="1" source="c3" target="s1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" value="Mongoose Queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10b981;strokeWidth=2;fontColor=#10b981;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="srv2" target="d1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" value="Audit Events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10b981;strokeWidth=2;fontColor=#10b981;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" parent="1" source="srv3" target="d2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10b981;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="boxData" source="d1" target="d2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- PAGE 2: DATA FLOW DIAGRAM (DFD) -->
+  <diagram id="dfd-page" name="2. Data Flow Diagram (DFD)">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" background="#0f172a" math="0" shadow="0">
+      <root>
+        <mxCell id="dfd0" />
+        <mxCell id="dfd1" parent="dfd0" />
+
+        <!-- Header -->
+        <mxCell id="dfdHdr1" value="AUTHENTICATION &amp; ACCESS CONTROL - DATA FLOW DIAGRAM (DFD)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#f8fafc;fontFamily=Helvetica;" vertex="1" parent="dfd1">
+          <mxGeometry x="200" y="25" width="1000" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- DFD Steps -->
+        <mxCell id="dfdStep1" value="1. User Login Request&#xa;(email, password)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#e2e8f0;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="50" y="240" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdStep2" value="2. Sanitize &amp; Validate&#xa;• Strip '$' and '.' keys&#xa;• Zod Schema check" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2e1065;strokeColor=#a855f7;fontColor=#f3e8ff;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="260" y="240" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdStep3" value="3. Account Locked?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#3b0764;strokeColor=#c084fc;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="460" y="225" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdLockedOut" value="403 Forbidden&#xa;(Locked for 15 min)&#xa;Log Denied Event" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#fca5a5;fontSize=11;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="450" y="80" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdStep4" value="4. bcrypt.compare&#xa;(candidate vs hash)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#3b0764;strokeColor=#c084fc;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="640" y="225" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdFail" value="401 Unauthorized&#xa;Increment Failures (+1)&#xa;Lock if &gt;= 5 attempts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#fca5a5;fontSize=11;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="630" y="80" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdStep5" value="5. Issue Signed JWT&#xa;(Role claim + 4h expiry)&#xa;Log Success" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ecfdf5;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="820" y="240" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdStep6" value="6. RBAC Role Check" style="rhombus;whiteSpace=wrap;html=1;fillColor=#3b0764;strokeColor=#c084fc;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="1030" y="225" width="130" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdDenied" value="403 Forbidden&#xa;Role Insufficient&#xa;Audit Log Written" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#450a0a;strokeColor=#ef4444;fontColor=#fca5a5;fontSize=11;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="1020" y="80" width="150" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Downstream Execution -->
+        <mxCell id="dfdStep7" value="7. Parameterized Mongoose Query&#xa;(Strict typed schemas &amp; ObjectId refs)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#e2e8f0;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="970" y="420" width="250" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdStep8" value="8. AES-256-GCM Cryptography&#xa;(Encrypt/Decrypt sensitive fields at rest)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#10b981;fontColor=#6ee7b7;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="970" y="520" width="250" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dfdStep9" value="9. Secure Response over TLS 1.3&#xa;(Sanitized JSON, No stack traces)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0369a1;strokeColor=#38bdf8;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="dfd1">
+          <mxGeometry x="970" y="620" width="250" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- DFD Edges -->
+        <mxCell id="dfde1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#38bdf8;strokeWidth=2;" edge="1" parent="dfd1" source="dfdStep1" target="dfdStep2" />
+        <mxCell id="dfde2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#a855f7;strokeWidth=2;" edge="1" parent="dfd1" source="dfdStep2" target="dfdStep3" />
+        <mxCell id="dfde3a" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#ef4444;strokeWidth=2;fontColor=#ef4444;" edge="1" parent="dfd1" source="dfdStep3" target="dfdLockedOut" />
+        <mxCell id="dfde3b" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10b981;strokeWidth=2;fontColor=#10b981;" edge="1" parent="dfd1" source="dfdStep3" target="dfdStep4" />
+        <mxCell id="dfde4a" value="Mismatch" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#ef4444;strokeWidth=2;fontColor=#ef4444;" edge="1" parent="dfd1" source="dfdStep4" target="dfdFail" />
+        <mxCell id="dfde4b" value="Match (Success)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10b981;strokeWidth=2;fontColor=#10b981;" edge="1" parent="dfd1" source="dfdStep4" target="dfdStep5" />
+        <mxCell id="dfde5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10b981;strokeWidth=2;" edge="1" parent="dfd1" source="dfdStep5" target="dfdStep6" />
+        <mxCell id="dfde6a" value="Denied" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#ef4444;strokeWidth=2;fontColor=#ef4444;" edge="1" parent="dfd1" source="dfdStep6" target="dfdDenied" />
+        <mxCell id="dfde6b" value="Allowed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10b981;strokeWidth=2;fontColor=#10b981;" edge="1" parent="dfd1" source="dfdStep6" target="dfdStep7" />
+        <mxCell id="dfde7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#38bdf8;strokeWidth=2;" edge="1" parent="dfd1" source="dfdStep7" target="dfdStep8" />
+        <mxCell id="dfde8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#10b981;strokeWidth=2;" edge="1" parent="dfd1" source="dfdStep8" target="dfdStep9" />
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

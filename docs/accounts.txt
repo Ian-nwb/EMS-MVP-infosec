@@ -1,0 +1,13 @@
+EMS - Seeded Account Credentials
+=================================
+
+Email                   | Password        | Role
+------------------------|-----------------|----------------------------
+superadmin@ems.com      | SuperAdmin1!@#  | Superadmin
+admin@ems.com           | Admin123!@#     | HR
+hr@ems.com              | Admin123!@#     | HR - Eleanor Vance
+manager@ems.com         | Manager123!@#   | Manager - Marcus Sterling
+employee@ems.com        | Employee123!@#  | Employee - Sarah Chen
+
+Note: Self-registration always creates Employee accounts.
+Role assignment is done by HR Admin or Superadmin.

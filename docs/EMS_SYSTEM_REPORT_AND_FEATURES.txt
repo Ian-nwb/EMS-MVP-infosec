@@ -1,0 +1,357 @@
+================================================================================
+              EMPLOYEE MANAGEMENT SYSTEM (EMS) - COMPREHENSIVE REPORT
+                Course Project: Secure System Design & Implementation
+================================================================================
+
+Target Stack: MERN (MongoDB Atlas · Express.js · React SPA · Node.js)
+Environment : Google Antigravity (Agentic IDE)
+Database    : MongoDB Atlas (torinvr_db) with TLS 1.3 & AES-256-GCM Encryption
+
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+1. System Overview & Core Objectives
+2. System Architecture Diagram (Text & Mermaid)
+3. Data Flow Diagram (DFD) (Text & Mermaid)
+4. Comprehensive Feature Breakdown
+   4.1 Authentication & Credential Hardening
+   4.2 Role-Based Access Control (RBAC) Matrix
+   4.3 Superadmin User Management CRUD
+   4.4 Employee Record Management
+   4.5 Department & Position Management
+   4.6 Leave Request Workflow
+   4.7 Payroll Management & Sensitive Data Encryption
+   4.8 Attendance Tracking
+   4.9 Immutable Audit Logging
+5. Risk Assessment & Threat Modeling (STRIDE-lite)
+6. Secure Coding & Defensive Controls
+7. Default Seed Accounts for Testing & Evaluation
+
+
+================================================================================
+1. SYSTEM OVERVIEW & CORE OBJECTIVES
+================================================================================
+The Employee Management System (EMS) is an enterprise-grade, secure web
+application engineered to manage institutional HR operations, employee records,
+departmental structures, leave requests, attendance logs, and payroll data.
+
+Designed strictly around "Security by Design" and "Defense in Depth" principles,
+the application enforces:
+- Robust identification, authentication, and authorization mechanisms.
+- Separation of duties across Superadmin, HR, Manager, and Employee roles.
+- Complete protection against OWASP Top 10 vulnerabilities (NoSQL injection,
+  Broken Access Control, Sensitive Data Exposure, Brute-force/Credential Stuffing).
+- AES-256-GCM field-level encryption for sensitive PII and financial records at rest.
+- Structured, tamper-evident audit logging for all sensitive read and write actions.
+
+
+================================================================================
+2. SYSTEM ARCHITECTURE DIAGRAM
+================================================================================
+
+ASCII Diagram:
++-----------------------------------------------------------------------------+
+| CLIENT TIER: React SPA (Vite, Dynamic Glassmorphic Cyber UI)                |
++-----------------------------------------------------------------------------+
+                                       |
+                     HTTPS / TLS 1.3   | Authorization: Bearer <JWT>
+                                       v
++-----------------------------------------------------------------------------+
+| GATEWAY / SECURITY LAYER (Express.js)                                       |
+|  1. Helmet Security Headers (CSP, HSTS, Frameguard, X-Content-Type)         |
+|  2. Rate Limiting Middleware (authLimiter, apiLimiter - DDoS/Brute-force)   |
+|  3. CORS Policy (Strict Origin White-listing)                               |
+|  4. Payload Size Limiters (JSON body parser max 15KB - DoS mitigation)       |
+|  5. NoSQL Injection Sanitizer (express-mongo-sanitize: strips $ and . keys) |
+|  6. JWT Authentication Middleware (Signature verification & Token Expiry)   |
+|  7. RBAC Guard (Enforces superadmin / hr / manager / employee permissions)  |
+|  8. Input Validation Layer (Zod schema allow-list validation)               |
++-----------------------------------------------------------------------------+
+                                       |
+                                       v
++-----------------------------------------------------------------------------+
+| BUSINESS LOGIC & APPLICATION SERVICES                                       |
+|  - Auth & Account Lockout Controller                                        |
+|  - Superadmin User Management Controller                                    |
+|  - Employee CRUD Controller                                                 |
+|  - Department Controller                                                    |
+|  - Leave Workflow Engine                                                    |
+|  - Attendance Controller                                                    |
+|  - Payroll Controller                                                       |
+|  - Node.js Crypto Engine (AES-256-GCM cipher/decipher)                      |
+|  - Structured Audit Logger                                                  |
++-----------------------------------------------------------------------------+
+                       |                               |
+                       | Mongoose Queries              | Audit Trail
+                       v                               v
++-----------------------------------------------------------------------------+
+| DATA STORAGE TIER                                                           |
+|  - MongoDB Atlas Cloud Replica Set (torinvr_db)                             |
+|  - Collections: Users, Employees, Departments, Leave_Requests, Payroll,     |
+|                 Attendance, Audit_Logs                                      |
++-----------------------------------------------------------------------------+
+
+Mermaid Diagram:
+```mermaid
+flowchart TD
+  subgraph Client["Client Tier"]
+    UI["React SPA (Vite)"]
+  end
+
+  subgraph Gateway["HTTPS / TLS 1.3 Gateway"]
+    MW["Express.js Server"]
+    subgraph Security["Security Layer (Defense in Depth)"]
+      RATE["Rate Limiter (Brute-force protection)"]
+      HELMET["Helmet Security Headers (CSP, HSTS)"]
+      SAN["NoSQL Sanitizer (express-mongo-sanitize)"]
+      AUTH["Auth Middleware (JWT Verify)"]
+      RBAC["RBAC Guard (Role Check)"]
+      VAL["Input Validation (Zod Schemas)"]
+    end
+    BIZ["Business Logic Controllers"]
+    CRYPTO["AES-256-GCM Crypto Engine"]
+    LOG["Structured Audit Logger"]
+  end
+
+  subgraph DataTier["Data Tier"]
+    DB[("MongoDB Atlas - torinvr_db")]
+  end
+
+  UI -->|HTTPS + Bearer JWT| MW
+  MW --> RATE --> HELMET --> SAN --> AUTH --> RBAC --> VAL --> BIZ
+  BIZ --> CRYPTO --> DB
+  BIZ --> LOG --> DB
+```
+
+
+================================================================================
+3. DATA FLOW DIAGRAM (DFD) - AUTHENTICATION & ACCESS
+================================================================================
+
+ASCII Diagram:
+  [Client Browser]
+         |
+         | 1. POST /api/auth/login {email, password}
+         v
+  [Rate Limiter] ---> (Limit Exceeded) ---> 429 Too Many Requests
+         |
+         | (Within Limits)
+         v
+  [Sanitization & Zod Validation] ---> (Malformed / $ Operator) ---> 400 Bad Request
+         |
+         | (Valid Schema)
+         v
+  [Check Account Lockout] ---> (Lockout Active) ---> 403 Forbidden (Wait X Mins)
+         |
+         | (Account Active)
+         v
+  [bcrypt Hash Compare] ---> (Invalid Password) ---> Increment Failed Count (Lock if >=5)
+         |                                           Write Failure Audit Log
+         |                                           Return 401 Unauthorized
+         | (Password Valid)
+         v
+  [Reset Failed Logins Counter]
+         |
+         v
+  [Issue Signed JWT (4-Hour Expiry)]
+         |
+         v
+  [Write Audit Log: AUTH_LOGIN_SUCCESS]
+         |
+         v
+  [Return 200 OK + JWT Token + Sanitized User Profile]
+         |
+         | (Subsequent Protected Requests: Bearer <Token>)
+         v
+  [RBAC Middleware Check] ---> (Unauthorized Role) ---> 403 Forbidden + Audit Log
+         |
+         | (Authorized)
+         v
+  [Execute Mongoose Typed Query / AES Field Cryptography]
+         |
+         v
+  [Safe Response Transmitted over TLS 1.3]
+
+Mermaid Diagram:
+```mermaid
+flowchart LR
+  U["User Login Request"] --> V["Validate & Sanitize Input"]
+  V --> L{"Account Locked?"}
+  L -->|Yes| LK["403 Forbidden (Lockout Active)"]
+  L -->|No| H["bcrypt Hash Compare"]
+  H -->|Failure| FL["Increment Failures (Lock at 5) + 401 Unauthorized"]
+  H -->|Success| S["Issue Signed JWT (4h Expiry)"]
+  S --> C["RBAC Policy Check"]
+  C -->|Denied| D["403 Forbidden + Audit Log"]
+  C -->|Allowed| Q["Typed Mongoose Query"]
+  Q --> R["Encrypt/Decrypt Sensitive Fields (AES-256)"]
+  R --> O["Response Transmitted over TLS"]
+```
+
+
+================================================================================
+4. COMPREHENSIVE FEATURE BREAKDOWN
+================================================================================
+
+4.1 AUTHENTICATION & CREDENTIAL HARDENING
+----------------------------------------
+- Bcrypt Hashing: Passwords hashed using bcrypt with salt rounds = 12. Plaintext
+  passwords are never saved or recorded in memory or logs.
+- Short-Lived JWTs: Issued upon successful authentication with a 4-hour lifespan,
+  containing user ID, email, and assigned role.
+- Account Lockout Defense: Tracks consecutive failed attempts. After 5 failed
+  attempts, the account is locked for 15 minutes. Successful login resets counter.
+- Dual-Layer Rate Limiting: Dedicated auth limiter protects login/register
+  endpoints (300 req/15min in dev; 10 req/15min in prod) to eliminate brute-force
+  and credential stuffing risks.
+- Registration Guard: Public self-registration automatically defaults the role
+  to "employee". Self-escalation to "hr", "manager", or "superadmin" is rejected.
+
+4.2 ROLE-BASED ACCESS CONTROL (RBAC) MATRIX
+-------------------------------------------
+Permission / Action        | Superadmin | HR Admin | Manager | Employee
+---------------------------|------------|----------|---------|---------
+User Management (CRUD)     |    YES     |    NO    |   NO    |   NO
+Unlock / Reset Users       |    YES     |    NO    |   NO    |   NO
+Manage Roles               |    YES     |    NO    |   NO    |   NO
+View Own Profile           |     -      |   YES    |   YES   |   YES
+Employee Records (CRUD)    |     -      |   YES    | View Dpt|  View Own
+Department Management      |     -      |   YES    | View Dpt|  View Own
+Leave Request Submission   |     -      |   YES    |   YES   |   YES
+Leave Request Approval     |     -      |   YES    | Team Only|  NO
+Payroll Creation / Edit    |     -      |   YES    |   NO    |   NO
+Payroll View               |     -      |   YES    |   NO    | Own Only
+Attendance Clock In/Out    |     -      |   YES    |   YES   |   YES
+Attendance Overview        |     -      |   YES    | Team Only| Own Only
+System Audit Logs          |     -      |   YES    |   NO    |   NO
+
+4.3 SUPERADMIN USER MANAGEMENT MODULE
+-------------------------------------
+- Dedicated Isolated Portal: When logging in as superadmin, the user interface
+  strictly presents the User Management CRUD view, removing standard employee,
+  HR, and manager widgets.
+- Features:
+  * Full User Listing: Displays email, associated name, role, account status,
+    and lockout state.
+  * Account Provisioning: Create new system accounts directly with any role
+    (superadmin, hr, manager, employee).
+  * Dynamic Role Assignment: Edit user roles directly with immediate persistence.
+  * Account Lockout Reset: Instantly unlock user accounts locked by brute-force
+    attempts.
+  * Activation Toggle: Activate or deactivate accounts without deleting data.
+  * Safe Deletion: Permanently delete inactive accounts (prevents self-deletion).
+
+4.4 EMPLOYEE RECORD MANAGEMENT
+------------------------------
+- Complete employee lifecycle tracking (personal details, department ref, job
+  title, employment status, hire date, salary, government IDs).
+- Strict separation: Sensitive fields (salary, SSN) encrypted and hidden from
+  unauthorized viewers.
+- Automated linkage between User login account and Employee operational record.
+
+4.5 DEPARTMENT & POSITION MANAGEMENT
+------------------------------------
+- Department hierarchy management with unique name constraints.
+- Assignment of Department Managers for automated approval hierarchies.
+- Live employee count calculation and team allocation.
+
+4.6 LEAVE REQUEST WORKFLOW
+--------------------------
+- Employees submit leave applications specifying leave type (Annual, Sick,
+  Emergency, Maternity/Paternity, Unpaid), date ranges, and reasons.
+- Status states: `pending` -> `approved` or `rejected`.
+- Approval Guard: Managers approve or reject leave requests within their department;
+  HR administrators possess global approval authority.
+- Timestamped audit details and reviewer decision notes attached to every ticket.
+
+4.7 PAYROLL MANAGEMENT & AES-256 ENCRYPTION
+-------------------------------------------
+- Server-side net pay calculation:
+  Net Pay = Basic Salary + Allowances - Deductions.
+- Payment status workflow: `draft` -> `processed` -> `paid`.
+- Field-level AES-256-GCM encryption for stored government identifiers and
+  sensitive financial figures.
+- Direct Employee Payslip Portal: Employees can view and generate payment vouchers
+  strictly for their own records through server-side ownership verification.
+
+4.8 ATTENDANCE TRACKING
+-----------------------
+- Daily check-in / check-out logging with automated status assignment
+  (`present`, `late`, `absent`).
+- Live workday duration calculations.
+- Read-only historical summaries for employees; department aggregations for managers.
+
+4.9 IMMUTABLE AUDIT LOGGING
+---------------------------
+- Centralized `AuditLog` collection capturing every security-relevant action:
+  * Authentication (Logins, Failed attempts, Lockouts)
+  * Account administration (Registration, Role changes, Deletions)
+  * Sensitive data reads (Salary views, Payslip generations)
+  * CRUD transactions across employees, departments, and payroll.
+- Stored attributes: Timestamp, Actor User ID, Actor Email, Action Code,
+  Target Resource, Resource ID, IP Address, User Agent, Status (SUCCESS/FAILURE/DENIED),
+  and sanitized contextual metadata.
+- Audit logs are append-only and cannot be altered via API routes.
+
+
+================================================================================
+5. RISK ASSESSMENT & THREAT MODELING (STRIDE-LITE)
+================================================================================
+
+5.1 IDENTIFIED CRITICAL ASSETS
+1. User Credentials (password hashes, JWT secrets).
+2. MongoDB Atlas Database (`torinvr_db`: PII, salaries, SSNs).
+3. Express.js Application Server & Environment Secrets.
+4. Cryptographic Encryption Keys (AES-256-GCM secret key).
+5. Network Infrastructure (TLS endpoints, CORS boundaries).
+
+5.2 THREAT MODEL & DEFENSIVE MITIGATION MATRIX
+Threat (STRIDE)        | Vulnerability Vector       | EMS Defensive Control
+-----------------------|----------------------------|---------------------------
+Spoofing (S)           | Credential guessing, stolen| Bcrypt (cost 12), lockout
+                       | tokens                     | at 5 fails, 4h JWT expiry
+Tampering (T)          | NoSQL operator injection   | express-mongo-sanitize,
+                       | ($gt, $ne bypasses)        | Zod typed schemas
+Repudiation (R)        | Denying unauthorized actions| Immutable audit logs with
+                       | or edits                   | IP, timestamp, user ID
+Information            | PII / Salary data leaks    | AES-256-GCM at rest,
+Disclosure (I)         | in transit or at rest      | TLS 1.3, strict RBAC
+Denial of              | Auth brute-force, huge     | Express rate-limiting,
+Service (D)            | JSON payloads              | 15KB body parser limits
+Elevation of           | Parameter manipulation     | Server-side RBAC guard,
+Privilege (E)          | on registration/role fields| self-reg locked to employee
+
+
+================================================================================
+6. SECURE CODING & DEFENSIVE CONTROLS
+================================================================================
+1. Input Validation: All inputs validated through Zod allow-list schemas.
+2. Error Handling: Production responses return generic error messages to prevent
+   stack trace leakage and internal system disclosure.
+3. Security Headers: Helmet applies Content Security Policy (CSP), Strict
+   Transport Security (HSTS), and X-Frame-Options against clickjacking.
+4. CORS Protection: Cross-Origin Resource Sharing locked strictly to client origins.
+5. MongoDB Operator Sanitization: All query payloads sanitized by stripping `$`
+   and `.` keys before query execution.
+
+
+================================================================================
+7. DEFAULT SEEDED ACCOUNTS FOR TESTING & EVALUATION
+================================================================================
+
+Role          | Email                 | Password         | Description
+--------------|-----------------------|------------------|----------------------
+Superadmin    | superadmin@ems.com    | SuperAdmin1!@#   | User Management CRUD
+HR Admin      | admin@ems.com         | Admin123!@#      | Full HR CRUD Access
+HR Admin      | hr@ems.com            | Admin123!@#      | Eleanor Vance (HR)
+Manager       | manager@ems.com       | Manager123!@#    | Marcus Sterling (Eng)
+Employee      | employee@ems.com      | Employee123!@#   | Sarah Chen (Dev)
+
+All passwords conform to the strict security policy:
+- Minimum 8 characters
+- At least 1 uppercase letter
+- At least 1 lowercase letter
+- At least 1 digit
+- At least 1 special character
+================================================================================
